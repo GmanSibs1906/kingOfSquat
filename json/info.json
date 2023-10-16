@@ -1,0 +1,18 @@
+[
+  {
+    "title" : "Strecth",
+    "img" : "assets/stretch.jpg"
+  },
+  {
+    "title" : "Glutes",
+    "img" : "assets/glutes.jpg"
+  },
+  {
+    "title" : "Abs",
+    "img" : "assets/abs.jpg"
+  },
+  {
+    "title" : "Back",
+    "img" : "assets/back.webp"
+  }
+]
