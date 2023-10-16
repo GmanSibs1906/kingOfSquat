@@ -13,16 +13,17 @@ class VideoInfo extends StatefulWidget {
 }
 
 class _VideoInfoState extends State<VideoInfo> {
-
-  List videoInfo=[];
-  _initData(){
-    DefaultAssetBundle.of(context).loadString("json/videoinfo.json").then((value){
+  List videoInfo = [];
+  _initData() {
+    DefaultAssetBundle.of(context)
+        .loadString("json/videoinfo.json")
+        .then((value) {
       videoInfo = json.decode(value);
     });
   }
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _initData();
   }
@@ -53,7 +54,7 @@ class _VideoInfoState extends State<VideoInfo> {
                     Row(
                       children: [
                         InkWell(
-                          onTap: (){
+                          onTap: () {
                             Get.back();
                           },
                           child: Icon(
@@ -107,12 +108,8 @@ class _VideoInfoState extends State<VideoInfo> {
                             borderRadius: BorderRadius.circular(10),
                             gradient: LinearGradient(
                               colors: [
-                                color.AppColor
-                                    .gradientSecond
-                                    .withOpacity(0.9),
-                                color.AppColor
-                                    .gradientSecond
-                                    .withOpacity(0.5),
+                                color.AppColor.gradientSecond.withOpacity(0.9),
+                                color.AppColor.gradientSecond.withOpacity(0.5),
                               ],
                               begin: Alignment.bottomLeft,
                               end: Alignment.topRight,
@@ -127,7 +124,7 @@ class _VideoInfoState extends State<VideoInfo> {
                                 size: 20,
                               ),
                               Text(
-                                "68 min",
+                                "60 min",
                                 style: TextStyle(
                                   color: color.AppColor.secondPageTitleColor,
                                   fontSize: 16,
@@ -144,12 +141,8 @@ class _VideoInfoState extends State<VideoInfo> {
                             borderRadius: BorderRadius.circular(10),
                             gradient: LinearGradient(
                               colors: [
-                                color.AppColor
-                                    .gradientSecond
-                                    .withOpacity(0.9),
-                                color.AppColor
-                                    .gradientSecond
-                                    .withOpacity(0.5),
+                                color.AppColor.gradientSecond.withOpacity(0.9),
+                                color.AppColor.gradientSecond.withOpacity(0.5),
                               ],
                             ),
                           ),
@@ -178,10 +171,12 @@ class _VideoInfoState extends State<VideoInfo> {
               ),
             ],
           ),
-          SizedBox(height: 30,),
+          SizedBox(
+            height: 30,
+          ),
           Expanded(
             child: Container(
-              padding : EdgeInsets.fromLTRB(30, 30, 30, 0),
+              padding: EdgeInsets.fromLTRB(30, 30, 30, 0),
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
                 color: color.AppColor.homePageBackground,
@@ -209,7 +204,7 @@ class _VideoInfoState extends State<VideoInfo> {
                             color: color.AppColor.loopColor,
                           ),
                           Container(
-                            padding : EdgeInsets.fromLTRB(10, 0, 0, 0),
+                            padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
                             child: Text(
                               "3 sets",
                               style: TextStyle(
@@ -222,26 +217,26 @@ class _VideoInfoState extends State<VideoInfo> {
                       ),
                     ],
                   ),
-                  Expanded(child: ListView.builder(
-                      itemCount: videoInfo.length,
-                      itemBuilder: (_, int index){
-
-                    return GestureDetector(
-                      onTap: (){
-                        debugPrint(index.toString());
-                      },
-                      child: Container(
-                        height: 135,
-                        width: 200,
-                        color: Colors.red,
-                        child: Column(
-                          children: [
-                            Row(),
-                          ],
-                        ),
-                      ),
-                    );
-                  }))
+                  Expanded(
+                      child: ListView.builder(
+                          itemCount: videoInfo.length,
+                          itemBuilder: (_, int index) {
+                            return GestureDetector(
+                              onTap: () {
+                                debugPrint(index.toString());
+                              },
+                              child: Container(
+                                height: 135,
+                                width: 200,
+                                color: Colors.red,
+                                child: Column(
+                                  children: [
+                                    Row(),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }))
                 ],
               ),
             ),
