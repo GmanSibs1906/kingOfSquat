@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/get_navigation.dart';
+import 'package:video_player/video_player.dart';
 import 'colors.dart' as color;
 
 class VideoInfo extends StatefulWidget {
@@ -15,6 +16,9 @@ class VideoInfo extends StatefulWidget {
 class _VideoInfoState extends State<VideoInfo> {
   List videoInfo = [];
   bool _playArea = false;
+  bool _isPlaying = false;
+  bool _disposed = false;
+  VideoPlayerController? _controller;
   _initData() async {
     await DefaultAssetBundle.of(context)
         .loadString("json/videoinfo.json")
@@ -29,6 +33,15 @@ class _VideoInfoState extends State<VideoInfo> {
   void initState() {
     super.initState();
     _initData();
+  }
+
+  @override
+  void dispose(){
+    _disposed = true;
+    _controller?.pause();
+    _controller?.dispose();
+    _controller= null;
+    super.dispose();
   }
 
   @override
@@ -102,7 +115,7 @@ class _VideoInfoState extends State<VideoInfo> {
                       ],
                     ),
                     SizedBox(
-                      height: 50,
+                      height: 30,
                     ),
                     Row(
                       children: [
@@ -175,13 +188,43 @@ class _VideoInfoState extends State<VideoInfo> {
                 ),
               ) : Container(
                width: MediaQuery.of(context).size.width,
-               height: 300,
-               color: Colors.lightGreenAccent,
+               child: Column(
+                 children: [
+                   Container(
+                     height: 100,
+                     padding: const EdgeInsets.only(top: 50, left: 30, right: 30),
+                     child: Row(
+                       children: [
+                         InkWell(
+                           onTap: () {
+                             debugPrint("tappeed");
+                           },
+                           child: Icon(
+                             Icons.arrow_back_ios,
+                             size: 20,
+                             color: color.AppColor.secondPageIconColor,
+                           ),
+                         ),
+                         Expanded(child: Container()),
+                         InkWell(
+                           onTap: () {
+                             debugPrint("tappeed");
+                           },
+                           child: Icon(
+                             Icons.info_outline,
+                             size: 20,
+                             color: color.AppColor.secondPageIconColor,
+                           ),
+                         ),
+                       ],
+                     ),
+                   ),
+                   _playView(context),
+                   _controlView(context),
+                 ],
+               ),
              ),
             ],
-          ),
-          SizedBox(
-            height: 30,
           ),
           Expanded(
             child: Container(
@@ -237,12 +280,126 @@ class _VideoInfoState extends State<VideoInfo> {
       ),
     ));
   }
+  Widget _controlView(BuildContext context){
+    return Container(
+      height: 60,
+        width: MediaQuery.of(context).size.width,
+      color: color.AppColor.gradientSecond,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            onPressed: ()async{
+
+            },
+            icon: Icon(
+              Icons.fast_rewind,
+              size: 36,
+              color: Colors.white,
+            )
+          ),
+          IconButton(
+              onPressed: ()async{
+                if (_isPlaying){
+                  setState(() {
+                    _isPlaying = false;
+                  });
+                  _controller?.pause();
+                } else {
+                  _controller?.play();
+                  setState(() {
+                    _isPlaying = true;
+                  });
+                }
+              },
+              icon: Icon(
+                _isPlaying? Icons.pause :
+                Icons.play_arrow,
+                size: 36,
+                color: Colors.white,
+              )
+          ),
+          IconButton(
+              onPressed: ()async{
+
+              },
+              icon: Icon(
+                Icons.fast_forward,
+                size: 36,
+                color: Colors.white,
+              )
+          ),
+        ],
+      ),
+    );
+  }
+  Widget _playView(BuildContext context){
+    final controller = _controller;
+    if (controller != null && controller.value.isInitialized){
+      return Container(
+        margin: EdgeInsets.fromLTRB(30, 0, 30, 10),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.lime,
+          ),
+        ),
+        child: AspectRatio(
+          aspectRatio: 16/9,
+          child: VideoPlayer(
+              controller
+          ),
+        ),
+      );
+    } else {
+      return AspectRatio(
+        aspectRatio: 16/9,
+          child: Center(
+            child: Text(
+                "Losading video....",
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+              ),
+            ),
+          )
+      );
+    }
+  }
+  void _onControllerUpdate()async {
+    final controller = _controller;
+    if (controller==null){
+      debugPrint("controller is null");
+      return;
+    }
+    if(!controller.value.isInitialized){
+      debugPrint("controller cannot be initialized");
+      return;
+    }
+    final playing = controller.value.isPlaying;
+    _isPlaying= playing;
+  }
+  _initializeVideo(int index) async{
+    final controller = VideoPlayerController.asset(videoInfo[index]["videoUrl"]);
+    _controller = controller;
+    setState(() {
+    });
+    controller..initialize().then((_){
+      controller.addListener(_onControllerUpdate);
+      controller.play();
+      setState(() {
+      });
+    });
+  }
+  _onTapVideo(int index){
+    _initializeVideo(index);
+  }
   _listView() {
     return ListView.builder(
         itemCount: videoInfo.length,
         itemBuilder: (_, int index) {
           return GestureDetector(
             onTap: () {
+              _onTapVideo(index);
               debugPrint(index.toString());
               setState(() {
                 if (_playArea == false ){
@@ -256,7 +413,7 @@ class _VideoInfoState extends State<VideoInfo> {
   }
   _buildCard(int index){
     return  Container(
-      height: 135,
+      height: 137,
       child: Column(
         children: [
           Row(

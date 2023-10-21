@@ -1,26 +1,26 @@
 [
   {
-    "title": "Squart and Walk",
+    "title": "Train 'istimela' routine",
     "time": "45 seconds",
-    "thumbnail": "assets/squat.jpg",
-    "videoUrl": "https://www.youtube.com/watch?v=gcNh17Ckjgg"
+    "thumbnail": "assets/king1.jpeg",
+    "videoUrl": "assets/train.mp4"
+  },
+  {
+    "title": "Grow your glutes",
+    "time": "20 seconds",
+    "thumbnail": "assets/king2.jpeg",
+    "videoUrl": "assets/glutes.mp4"
   },
   {
     "title": "Squart and Walk",
-    "time": "45 seconds",
-    "thumbnail": "assets/squat1.jpg",
-    "videoUrl": "https://www.youtube.com/watch?v=gcNh17Ckjgg"
+    "time": "16 seconds",
+    "thumbnail": "assets/king3.jpeg",
+    "videoUrl": "assets/turn.mp4"
   },
   {
-    "title": "Squart and Walk",
-    "time": "45 seconds",
-    "thumbnail": "assets/squat2.jpg",
-    "videoUrl": "https://www.youtube.com/watch?v=gcNh17Ckjgg"
-  },
-  {
-    "title": "Squart and Walk",
-    "time": "45 seconds",
-    "thumbnail": "assets/squat3.jpg",
-    "videoUrl": "https://www.youtube.com/watch?v=gcNh17Ckjgg"
+    "title": "Firm legs",
+    "time": "25 seconds",
+    "thumbnail": "assets/king4.jpeg",
+    "videoUrl": "assets/turn.mp4"
   }
 ]
