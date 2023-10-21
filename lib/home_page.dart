@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
             Row(
               children: [
                 Text(
-                  "King of Squats",
+                  "King of Squat",
                   style: TextStyle(
                     fontSize: 30,
                     color: color.AppColor.homePageTitle,
@@ -106,13 +106,9 @@ class _HomePageState extends State<HomePage> {
               width: MediaQuery.of(context).size.width,
               height: 220,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    color.AppColor.gradientFirst.withOpacity(0.8),
-                    color.AppColor.gradientSecond.withOpacity(0.9),
-                  ],
-                  begin: Alignment.bottomLeft,
-                  end: Alignment.centerRight,
+                image: DecorationImage(
+                  image: AssetImage('assets/background_image.png'),
+                  fit: BoxFit.cover,
                 ),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(10.0),
@@ -124,11 +120,26 @@ class _HomePageState extends State<HomePage> {
                   BoxShadow(
                     offset: const Offset(10, 5),
                     blurRadius: 10,
-                    color: color.AppColor.gradientSecond.withOpacity(0.3),
+                    color: color.AppColor.gradientSecond.withOpacity(0.9),
                   )
-                ]
+                ],
               ),
               child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(10.0),
+                    bottomLeft: Radius.circular(10.0),
+                    bottomRight: Radius.circular(10.0),
+                    topRight: Radius.circular(80.0),
+                  ),
+                  gradient: LinearGradient(
+                    colors: [
+                      color.AppColor.gradientFirst.withOpacity(0.8),
+                      color.AppColor.gradientSecond.withOpacity(0.4)
+                    ],
+                  ),
+
+                ),
                 padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,7 +161,7 @@ class _HomePageState extends State<HomePage> {
                     Row(
                       children: [
                         Text(
-                            "Legs Toning ",
+                          "Legs Toning ",
                           style: TextStyle(
                             fontSize: 25,
                             color: color.AppColor.homePageContainerTextBig,
@@ -182,10 +193,10 @@ class _HomePageState extends State<HomePage> {
                             ),
                             const SizedBox(width: 10,),
                             Text(
-                              "60 min",
+                              "10 mins",
                               style: TextStyle(
-                                color: color.AppColor.homePageContainerTextBig,
-                                fontSize: 15
+                                  color: color.AppColor.homePageContainerTextBig,
+                                  fontSize: 15
                               ),
                             ),
                           ],
@@ -193,7 +204,7 @@ class _HomePageState extends State<HomePage> {
                         Expanded(child: Container()),
                         Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(60),
+                              borderRadius: BorderRadius.circular(60),
                               boxShadow: [
                                 BoxShadow(
                                   color: color.AppColor.gradientFirst,
@@ -202,10 +213,15 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ]
                           ),
-                          child: const Icon(
-                            Icons.play_circle,
-                            color: Colors.white,
-                            size: 60,
+                          child: InkWell(
+                            onTap: (){
+                              Get.to(()=> const VideoInfo());
+                            },
+                            child: const Icon(
+                              Icons.play_circle,
+                              color: Colors.white,
+                              size: 60,
+                            ),
                           ),
                         ),
                       ],
@@ -258,10 +274,11 @@ class _HomePageState extends State<HomePage> {
                         Row(
                           children: [
                             Text(
-                                "You are doing great",
+                                "Nkululeko Dlamini",
                               style: TextStyle(
                                 fontWeight: FontWeight.w700,
                                 color: color.AppColor.homePageDetail,
+                                fontSize: 18,
                               ),
                             ),
                           ],
@@ -273,7 +290,7 @@ class _HomePageState extends State<HomePage> {
                             Row(
                               children: [
                                 Text(
-                                  "keep it up",
+                                  "Fitness Instructor",
                                   style: TextStyle(
                                     color: color.AppColor.homePagePlainColor,
                                   ),
@@ -283,9 +300,9 @@ class _HomePageState extends State<HomePage> {
                             Row(
                               children: [
                                 Text(
-                                  "stick to your plan",
+                                  "#NYAOLOMSHIMI",
                                   style: TextStyle(
-                                    color: color.AppColor.homePagePlainColor,
+                                    color: Colors.red,
                                   ),
                                 ),
                               ],

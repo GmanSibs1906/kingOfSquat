@@ -2,25 +2,25 @@
   {
     "title": "Train 'istimela' routine",
     "time": "45 seconds",
-    "thumbnail": "assets/king1.jpeg",
+    "thumbnail": "assets/king1.png",
     "videoUrl": "assets/train.mp4"
   },
   {
     "title": "Grow your glutes",
     "time": "20 seconds",
-    "thumbnail": "assets/king2.jpeg",
+    "thumbnail": "assets/king2.png",
     "videoUrl": "assets/glutes.mp4"
   },
   {
     "title": "Squart and Walk",
     "time": "16 seconds",
-    "thumbnail": "assets/king3.jpeg",
+    "thumbnail": "assets/king3.png",
     "videoUrl": "assets/turn.mp4"
   },
   {
     "title": "Firm legs",
     "time": "25 seconds",
-    "thumbnail": "assets/king4.jpeg",
-    "videoUrl": "assets/turn.mp4"
+    "thumbnail": "assets/king4.png",
+    "videoUrl": "assets/jump.mp4"
   }
 ]

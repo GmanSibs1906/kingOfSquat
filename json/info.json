@@ -1,18 +1,18 @@
 [
   {
-    "title" : "Strecth",
-    "img" : "assets/stretch.jpg"
+    "title" : "Knees",
+    "img" : "assets/knee.png"
   },
   {
     "title" : "Glutes",
-    "img" : "assets/glutes.jpg"
+    "img" : "assets/glute.png"
   },
   {
-    "title" : "Abs",
-    "img" : "assets/abs.jpg"
+    "title" : "Thighs",
+    "img" : "assets/thigh.png"
   },
   {
     "title" : "Back",
-    "img" : "assets/back.webp"
+    "img" : "assets/back.png"
   }
 ]

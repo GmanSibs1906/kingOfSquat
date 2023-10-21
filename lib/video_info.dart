@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/get_navigation.dart';
+import 'package:trainingapp/home_page.dart';
 import 'package:video_player/video_player.dart';
 import 'colors.dart' as color;
 
@@ -18,6 +20,7 @@ class _VideoInfoState extends State<VideoInfo> {
   bool _playArea = false;
   bool _isPlaying = false;
   bool _disposed = false;
+  int _isPlayingIndex = -1;
   VideoPlayerController? _controller;
   _initData() async {
     await DefaultAssetBundle.of(context)
@@ -73,7 +76,7 @@ class _VideoInfoState extends State<VideoInfo> {
                       children: [
                         InkWell(
                           onTap: () {
-                            Get.back();
+                            Get.to(()=> HomePage());
                           },
                           child: Icon(
                             Icons.arrow_back_ios,
@@ -142,7 +145,7 @@ class _VideoInfoState extends State<VideoInfo> {
                                 size: 20,
                               ),
                               Text(
-                                "60 min",
+                                "10 mins",
                                 style: TextStyle(
                                   color: color.AppColor.secondPageTitleColor,
                                   fontSize: 16,
@@ -153,7 +156,7 @@ class _VideoInfoState extends State<VideoInfo> {
                         ),
                         Expanded(child: Container()),
                         Container(
-                          width: 250,
+                          width: 220,
                           height: 30,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
@@ -168,12 +171,12 @@ class _VideoInfoState extends State<VideoInfo> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
-                                Icons.handyman_outlined,
+                                Icons.paid_outlined,
                                 color: color.AppColor.secondPageIconColor,
                                 size: 20,
                               ),
                               Text(
-                                "Resistent band, kettebell",
+                                "Free Version : Preview",
                                 style: TextStyle(
                                   color: color.AppColor.secondPageTitleColor,
                                   fontSize: 16,
@@ -280,59 +283,208 @@ class _VideoInfoState extends State<VideoInfo> {
       ),
     ));
   }
+
+  String convertTwo(int value) {
+    return value < 10 ? "0$value" : "$value";
+  }
+
   Widget _controlView(BuildContext context){
-    return Container(
-      height: 60,
-        width: MediaQuery.of(context).size.width,
-      color: color.AppColor.gradientSecond,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          IconButton(
-            onPressed: ()async{
-
-            },
-            icon: Icon(
-              Icons.fast_rewind,
-              size: 36,
+    final noMute = (_controller?.value?.volume??0) >0;
+    final duration = _duration?.inSeconds ?? 0;
+    final head = _position?.inSeconds ?? 0;
+    final remained = max(0, duration - head);
+    final mins = convertTwo(remained ~/ 60.0);
+    final secs = convertTwo(remained % 60);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            activeTrackColor: Colors.red[700],
+            inactiveTrackColor: Colors.red[100],
+            trackShape: RoundedRectSliderTrackShape(),
+            trackHeight: 2.0,
+            thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
+            thumbColor: Colors.redAccent,
+            overlayColor: Colors.red.withAlpha(32),
+            overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
+            tickMarkShape:  RoundSliderTickMarkShape(),
+            activeTickMarkColor: Colors.red[700],
+            inactiveTickMarkColor: Colors.red[100],
+            valueIndicatorShape: PaddleSliderValueIndicatorShape(),
+            valueIndicatorColor: Colors.redAccent,
+            valueIndicatorTextStyle: TextStyle(
               color: Colors.white,
-            )
+            ),
           ),
-          IconButton(
-              onPressed: ()async{
-                if (_isPlaying){
+          child: Slider(
+            value: max(0, min(_progress * 100, 100)),
+            min : 0,
+            max: 100,
+            divisions: 100,
+            label: _position?.toString().split(".")[0],
+            onChanged: (value) {
+              setState(() {
+                _progress = value * 0.01;
+              });
+            },
+            onChangeStart: (value) {
+              _controller?.pause();
+            },
+            onChangeEnd: (value) {
+              final duration = _controller?.value.duration;
+              if (duration != null) {
+                var newValue = max(0, min(value, 99)) * 0.01;
+                var millis = (duration.inMilliseconds * newValue).toInt();
+                _controller?.seekTo(Duration(milliseconds: millis));
+                _controller?.play();
+              }
+            },
+          ),
+        ),
+        Container(
+          height: 60,
+            width: MediaQuery.of(context).size.width,
+          color: color.AppColor.gradientSecond,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              InkWell(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          offset: Offset(0.0, 0.0),
+                          blurRadius: 4.0,
+                          color: Color.fromARGB(50, 0, 0, 0),
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      noMute?
+                      Icons.volume_up : Icons.volume_off,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                onTap: () {
+                  if(noMute) {
+                    _controller?.setVolume(0);
+                  } else {
+                    _controller?.setVolume(1.0);
+                  }
                   setState(() {
-                    _isPlaying = false;
                   });
-                  _controller?.pause();
-                } else {
-                  _controller?.play();
-                  setState(() {
-                    _isPlaying = true;
-                  });
-                }
-              },
-              icon: Icon(
-                _isPlaying? Icons.pause :
-                Icons.play_arrow,
-                size: 36,
-                color: Colors.white,
-              )
+                },
+              ),
+              IconButton(
+                onPressed: ()async{
+                  final index = _isPlayingIndex -1;
+                  if (index >= 0 && videoInfo.length >= 0) {
+                    _initializeVideo(index);
+                  } else {
+                    Get.snackbar(
+                      "Video", "",
+                      snackPosition: SnackPosition.BOTTOM,
+                      icon: Icon(
+                        Icons.face,
+                        size: 30,
+                        color: Colors.white,
+                      ),
+                      backgroundColor: color.AppColor.gradientSecond,
+                      colorText: Colors.white,
+                      messageText: Text(
+                        "You are on the first exersize ",
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white
+                        ),
+                      ),
+                    );
+                  }
+                },
+                icon: Icon(
+                  Icons.fast_rewind,
+                  size: 36,
+                  color: Colors.white,
+                )
+              ),
+              IconButton(
+                  onPressed: ()async{
+                    if (_isPlaying){
+                      setState(() {
+                        _isPlaying = false;
+                      });
+                      _controller?.pause();
+                    } else {
+                      _controller?.play();
+                      setState(() {
+                        _isPlaying = true;
+                      });
+                    }
+                  },
+                  icon: Icon(
+                    _isPlaying? Icons.pause :
+                    Icons.play_arrow,
+                    size: 36,
+                    color: Colors.white,
+                  )
+              ),
+              IconButton(
+                  onPressed: ()async{
+                    final index = _isPlayingIndex + 1;
+                    if (index <= videoInfo.length -1) {
+                      _initializeVideo(index);
+                    } else {
+                      Get.snackbar(
+                          "Video", "",
+                          snackPosition: SnackPosition.BOTTOM,
+                          icon: Icon(
+                            Icons.face,
+                            size: 30,
+                            color: Colors.white,
+                          ),
+                        backgroundColor: color.AppColor.gradientSecond,
+                        colorText: Colors.white,
+                        messageText: Text(
+                          "Well done 🎉 Workout Complete",
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  icon: Icon(
+                    Icons.fast_forward,
+                    size: 36,
+                    color: Colors.white,
+                  )
+              ),
+              Text(
+                "$mins:$secs",
+                style: TextStyle(
+                  color: Colors.white,
+                  shadows: <Shadow>[
+                    Shadow(
+                      offset: Offset(0.0, 1.0),
+                      blurRadius: 4.0,
+                      color: Color.fromARGB(150, 0, 0, 0),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          IconButton(
-              onPressed: ()async{
-
-              },
-              icon: Icon(
-                Icons.fast_forward,
-                size: 36,
-                color: Colors.white,
-              )
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
+
   Widget _playView(BuildContext context){
     final controller = _controller;
     if (controller != null && controller.value.isInitialized){
@@ -340,7 +492,8 @@ class _VideoInfoState extends State<VideoInfo> {
         margin: EdgeInsets.fromLTRB(30, 0, 30, 10),
         decoration: BoxDecoration(
           border: Border.all(
-            color: Colors.lime,
+            color: Colors.red,
+            width: 2.0,
           ),
         ),
         child: AspectRatio(
@@ -365,7 +518,23 @@ class _VideoInfoState extends State<VideoInfo> {
       );
     }
   }
+
+  var _onUpdateCControllerTime;
+  Duration? _duration;
+  Duration? _position;
+  var _progress = 0.0;
+
   void _onControllerUpdate()async {
+    if (_disposed) {
+      return;
+    }
+    _onUpdateCControllerTime=0;
+    final now = DateTime.now().millisecondsSinceEpoch;
+    if(_onUpdateCControllerTime > now){
+      return;
+    }
+
+    _onUpdateCControllerTime= now+ 500;
     final controller = _controller;
     if (controller==null){
       debugPrint("controller is null");
@@ -375,24 +544,50 @@ class _VideoInfoState extends State<VideoInfo> {
       debugPrint("controller cannot be initialized");
       return;
     }
+
+    if (_duration == null) {
+      _duration = _controller?.value.duration;
+    }
+
+    var duration = _duration;
+    if (duration == null) return;
+
+    var position = await controller.position;
+    _position = position;
     final playing = controller.value.isPlaying;
+    if (playing) {
+      if (_disposed) return;
+      setState(() {
+        _progress = _position!.inMilliseconds.ceilToDouble() / duration.inMilliseconds.ceilToDouble();
+      });
+    }
     _isPlaying= playing;
   }
+
   _initializeVideo(int index) async{
     final controller = VideoPlayerController.asset(videoInfo[index]["videoUrl"]);
+    final old = _controller;
     _controller = controller;
+    if (old!=null) {
+      old.removeListener(_onControllerUpdate);
+      old.pause();
+    }
     setState(() {
     });
     controller..initialize().then((_){
+      old?.dispose();
+      _isPlayingIndex = index;
       controller.addListener(_onControllerUpdate);
       controller.play();
       setState(() {
       });
     });
   }
+
   _onTapVideo(int index){
     _initializeVideo(index);
   }
+
   _listView() {
     return ListView.builder(
         itemCount: videoInfo.length,
@@ -411,6 +606,7 @@ class _VideoInfoState extends State<VideoInfo> {
           );
         });
   }
+
   _buildCard(int index){
     return  Container(
       height: 137,
